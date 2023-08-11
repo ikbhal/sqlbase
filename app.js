@@ -2,12 +2,14 @@ const express = require('express');
 const cors = require('cors');
 const sqlite3 = require('sqlite3').verbose();
 const db = require('./db');
+const v2Router = require('./routes/v2');
 
 const app = express();
 const port = 3026; // Use port 3026
 
 app.use(cors());
 app.use(express.json());
+app.use('/v2', v2Router);
 
 // Your API endpoints will be implemented here
 
