@@ -44,10 +44,26 @@ app.post('/tables', (req, res) => {
 
 // Insert Row API
 app.post('/tables/:table_name/rows', (req, res) => {
-  // Implement code to insert a row into the specified table
-  // Use db.run() to execute INSERT INTO SQL command
-  // Respond with appropriate status code and message
-  res.send("will implemtn soon ");
+    const tableName = req.params.table_name;
+    const { columns } = req.body;
+
+    if (!Array.isArray(columns)) {
+        return res.status(400).json({ error: "Columns should be an array." });
+    }
+
+    const columnsStr = columns.map(col => `"${col.name}"`).join(', ');
+    const placeholders = columns.map(() => '?').join(', ');
+    const values = columns.map(col => col.value);
+
+    const query = `INSERT INTO "${tableName}" (${columnsStr}) VALUES (${placeholders})`;
+
+    db.run(query, values, function (err) {
+        if (err) {
+            console.error('Error:', err.message);
+            return res.status(500).json({ error: err.message });
+        }
+        res.json({ message: 'Row inserted successfully', rowId: this.lastID });
+    });
 });
 
 // List Rows API
