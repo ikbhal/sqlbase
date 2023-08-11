@@ -3,6 +3,7 @@ const cors = require('cors');
 const sqlite3 = require('sqlite3').verbose();
 const db = require('./db');
 const v2Router = require('./routes/v2');
+const v3Router = require('./routes/v3');
 
 const app = express();
 const port = 3026; // Use port 3026
