@@ -26,7 +26,16 @@ router.post('/tables/:table_name/columns', (req, res) => {
     const tableName = req.params.table_name;
     const { name, type, defaultValue } = req.body;
 
-    const query = `ALTER TABLE "${tableName}" ADD COLUMN "${name}" ${type} DEFAULT ${defaultValue}`;
+    let query = `ALTER TABLE "${tableName}" ADD COLUMN "${name}" ${type}`;
+
+    if (defaultValue !== undefined) {
+        if (type.toUpperCase() === 'TEXT') {
+            // If the data type is TEXT, add single quotes around the default value
+            query += ` DEFAULT '${defaultValue}'`;
+        } else {
+            query += ` DEFAULT ${defaultValue}`;
+        }
+    }
 
     db.run(query, function(err) {
         if (err) {
