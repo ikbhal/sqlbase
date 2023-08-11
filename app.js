@@ -10,6 +10,7 @@ const port = 3026; // Use port 3026
 app.use(cors());
 app.use(express.json());
 app.use('/v2', v2Router);
+pp.use('/v3', v3Router);
 
 // Your API endpoints will be implemented here
 
