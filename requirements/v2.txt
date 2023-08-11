@@ -1,0 +1,4 @@
+1) delete row api 
+1) update row api 
+1) select row by conditions 
+1) drop table api 
