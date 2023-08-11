@@ -1,0 +1,2 @@
+Technology
+express,express-session, cors, connect-flash, sqlite, ejs
