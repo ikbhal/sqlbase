@@ -1,0 +1,5 @@
+v3 requirements
+
+1) drop tables
+1) add column to table
+1) limit rows in select rows clause 
