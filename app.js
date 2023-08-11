@@ -68,10 +68,17 @@ app.post('/tables/:table_name/rows', (req, res) => {
 
 // List Rows API
 app.get('/tables/:table_name/rows', (req, res) => {
-  // Implement code to retrieve and list rows from the specified table
-  // Use db.all() to execute SELECT SQL command
-  // Respond with the fetched rows as a JSON array
-  res.send("will implemtn soon ");
+    const tableName = req.params.table_name;
+
+    const query = `SELECT * FROM "${tableName}"`;
+
+    db.all(query, (err, rows) => {
+        if (err) {
+            console.error('Error:', err.message);
+            return res.status(500).json({ error: err.message });
+        }
+        res.json(rows);
+    });
 });
 
 app.listen(port, () => {
