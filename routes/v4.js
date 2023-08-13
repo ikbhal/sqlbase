@@ -92,3 +92,5 @@ router.get('/files/:filename/tables/:table_name/rows', (req, res) => {
         res.json(rows);
     });
 });
+
+module.exports = router;
