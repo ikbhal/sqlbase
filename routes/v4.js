@@ -1,25 +1,20 @@
+// v3.js
 const express = require('express');
-const cors = require('cors');
+const router = express.Router();
 const sqlite3 = require('sqlite3').verbose();
-const db = require('./db');
-const v2Router = require('./routes/v2');
-const v3Router = require('./routes/v3');
-const v4Router = require('./routes/v4');
+const path = require('path');
+const cors = require('cors');
+const getDatabase = require('../util/db_util').getDatabase;
 
-const app = express();
-const port = 3026; // Use port 3026
 
-app.use(cors());
-app.use(express.json());
-app.use('/v2', v2Router);
-app.use('/v3', v3Router);
-app.use('/v4', v4Router);
-
-// Your API endpoints will be implemented here
-
+router.use(cors());
+router.use(express.json());
 
 // Create Table API
-app.post('/tables', (req, res) => {
+router.post('/files/:filename/tables', (req, res) => {
+    // get filname from path 
+    const filename = req.params.filename;
+    const db  = getDatabase(filename);
     const { table_name, columns } = req.body;
   
     if (!table_name || !columns || !Array.isArray(columns) || columns.length === 0) {
@@ -41,6 +36,7 @@ app.post('/tables', (req, res) => {
     }).join(', ')})`;
   
     db.run(createTableSQL, (err) => {
+        db.close();
       if (err) {
         return res.status(500).json({ error: 'Table creation failed' });
       }
@@ -49,7 +45,11 @@ app.post('/tables', (req, res) => {
   });
 
 // Insert Row API
-app.post('/tables/:table_name/rows', (req, res) => {
+router.post('/files/:filename/tables/:table_name/rows', (req, res) => {
+    // get filname from path 
+    const filename = req.params.filename;
+    const db  = getDatabase(filename);
+
     const tableName = req.params.table_name;
     const { columns } = req.body;
 
@@ -64,6 +64,7 @@ app.post('/tables/:table_name/rows', (req, res) => {
     const query = `INSERT INTO "${tableName}" (${columnsStr}) VALUES (${placeholders})`;
 
     db.run(query, values, function (err) {
+        db.close();
         if (err) {
             console.error('Error:', err.message);
             return res.status(500).json({ error: err.message });
@@ -73,20 +74,21 @@ app.post('/tables/:table_name/rows', (req, res) => {
 });
 
 // List Rows API
-app.get('/tables/:table_name/rows', (req, res) => {
+router.get('/files/:filename/tables/:table_name/rows', (req, res) => {
+
+    const filename = req.params.filename;
+    const db  = getDatabase(filename);
+
     const tableName = req.params.table_name;
 
     const query = `SELECT * FROM "${tableName}"`;
 
     db.all(query, (err, rows) => {
+        db.close();
         if (err) {
             console.error('Error:', err.message);
             return res.status(500).json({ error: err.message });
         }
         res.json(rows);
     });
-});
-
-app.listen(port, () => {
-  console.log(`Server is running on port ${port}`);
 });
