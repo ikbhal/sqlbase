@@ -4,3 +4,8 @@ add file as part of each api
 ---
 1) insert row
 2) get rows all 
+---
+update row
+delete row 
+drop table 
+add column 
