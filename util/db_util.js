@@ -1,4 +1,5 @@
 
+const path = require('path');
 // write function get database for given file name which will create file at data folder , add suffix of .db 
 // and return the database object
 function getDatabase(filename) {
